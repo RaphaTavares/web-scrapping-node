@@ -1,12 +1,10 @@
-const functions = require("firebase-functions");
+import * as functions from "firebase-functions";
 
-const cors = require("cors")({ origin: true });
+import cors from "cors";
 
-const getUrls = require("get-urls");
-const cheerio = require("cheerio");
-const fetch = require("node-fetch");
-
-firebase.functions().useEmulator("localhost", 5001);
+import getUrls from "get-urls";
+import cheerio from "cheerio";
+import fetch from "node-fetch";
 
 const scrapeMetatags = (text) => {
   //cria um array a partir de um objeto array-like, que é oq getUrls(text) está retornando
@@ -37,12 +35,19 @@ const scrapeMetatags = (text) => {
   return Promise.all(requests);
 };
 
-exports.scraper = functions.https.onRequest((request, response) => {
+const scraper = functions.https.onRequest((request, response) => {
+  console.log("oi");
   cors(request, response, async () => {
+    console.log("ola");
     const body = JSON.parse(request.body);
     const data = await scrapeMetatags(body.text);
+
+    console.log(data);
+    response.send(data);
   });
 });
+
+export default scraper;
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
